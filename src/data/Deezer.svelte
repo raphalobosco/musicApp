@@ -51,6 +51,7 @@
         modal = false;
     }
 }
+
     
 
     // console.log(artistSearch);
