@@ -1,20 +1,20 @@
 <script>
     import Results from "../Components/Results.svelte";
     import SearchInput from "../Components/searchInput.svelte";
-   
-
+    
     export let artistSearch;
     let artistData = [];
-    let suggestion = []
+    let suggestion = [];
     
     let clicked = false
     let modal = false
     
     async function getArtist({ query }) {
+        const API_CODE = import.meta.env.VITE_RAPID_KEY
         const options = {
 	method: 'GET',
 	headers: {
-		'X-RapidAPI-Key': '2ada17cf2emsh3bad8b4a0f82850p1e5bbdjsnb70430199869',
+		'X-RapidAPI-Key': API_CODE,
 		'X-RapidAPI-Host': 'deezerdevs-deezer.p.rapidapi.com'
 	}
 };
@@ -24,19 +24,34 @@
         );
         const data = await response.json();
         artistData = data.data;
-    
     }
 
     // getArtist();
 
     function handleSearch() {
-        modal = false
+        artistData=[]
         clicked = true
-        getArtist({ artistSearch });
+        if (artistSearch) {
+            modal = false  
+            
+            getArtist({ artistSearch });
+            artistSearch = ""
+              
+        }else{
+            artistData=[]
+            clicked =false
+        }
+    }
+    
+    function handleClick(e){
+        artistSearch = e
+        
+        handleSearch()
     }
     
     function handleSuggestion() {
-    modal = true;
+        modal = true;
+        clicked =false
     if (artistSearch) {
         getArtist({ artistSearch });
         
@@ -46,7 +61,11 @@
             // uniqueSuggestions.add(album.title);
         });
         suggestion = Array.from(uniqueSuggestions);
+        
+        console.log(suggestion)
+        
     } else {
+    //  artistSearch = ""
         suggestion = [];
         modal = false;
     }
@@ -63,8 +82,8 @@
 
 {#if modal}
     <div class="position-absolute p-3 bg-white shadow">
-        {#each suggestion as item}
-            <p class="suggestion-item " on:click={handleSearch}>{item}</p>
+        {#each suggestion as item, i (i)}
+            <p key={i} class="suggestion-item " on:click={(e) => handleClick(item)}>{item}</p>
         {/each}
     </div>
 {/if}
