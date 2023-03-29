@@ -5,7 +5,8 @@
 
     export let artistSearch;
     let artistData = [];
-    let suggestion = [];
+    let suggestion = []
+    
     let clicked = false
     let modal = false
     
@@ -23,9 +24,7 @@
         );
         const data = await response.json();
         artistData = data.data;
-        suggestion = data.data
-       
-        console.log(artistData);
+    
     }
 
     // getArtist();
@@ -37,13 +36,22 @@
     }
     
     function handleSuggestion() {
-        modal = true
+    modal = true;
+    if (artistSearch) {
         getArtist({ artistSearch });
+        
+        const uniqueSuggestions = new Set();
+        artistData.forEach((album) => {
+            uniqueSuggestions.add(album.artist.name);
+            // uniqueSuggestions.add(album.title);
+        });
+        suggestion = Array.from(uniqueSuggestions);
+    } else {
+        suggestion = [];
+        modal = false;
     }
+}
     
-   
-    
-   
 
     // console.log(artistSearch);
 </script>
@@ -53,11 +61,11 @@
 
 
 {#if modal}
-<div class="position-absolute p-3 bg-light shadow" >
-{#each suggestion as item}
-<p style="cursor: pointer;" on:click={handleSearch} >{item.album.title} ({item.artist.name})</p>
-{/each}
-</div>
+    <div class="position-absolute p-3 bg-white shadow">
+        {#each suggestion as item}
+            <p class="suggestion-item " on:click={handleSearch}>{item}</p>
+        {/each}
+    </div>
 {/if}
 
 {#if clicked}
@@ -65,3 +73,20 @@
     <Results {item} />
 {/each}
 {/if}
+
+<style lang="scss">
+.suggestion-item {
+    cursor: pointer;
+    display: block;
+    font-weight: 400;
+    color: #666;
+    text-decoration: none;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+
+.suggestion-item:hover {
+    background-color: #eee;
+    color: #000;
+    }
+</style>
