@@ -6,7 +6,7 @@
 <div class="d-flex gap-3 mb-3">
     <input
         class="form-control"
-        placeholder="Artist, albums, singles..."
+        placeholder="Search for artist name"
         bind:value={artistSearch}
         on:input
     />
